@@ -1,5 +1,4 @@
 package org.example.kafka;
-
 import org.apache.kafka.clients.producer.*;
 
 import java.io.IOException;
