@@ -25,19 +25,37 @@ public class Subscriber {
 
         // Create a subscriber specific to topic
         MessageConsumer subscriber = session.createConsumer(destination);
-
+//        subscriber.setMessageListener(new MyTopicListener());
         Console c = System.console();
         String response;
         do {
             // Receive the message
+            long start = System.currentTimeMillis();
             Message msg = subscriber.receive();
+            long end = System.currentTimeMillis();
             response = ((TextMessage) msg).getText();
 
             System.out.println("Received = "+response);
-
+            System.out.println("Time taken = "+(end-start) + "ms");
         } while (!response.equalsIgnoreCase("Quit"));
 
         // Close the connection
         connection.close();
+    }
+
+    public static class MyTopicListener implements MessageListener {
+        @Override
+        public void onMessage(Message message) {
+            try{
+                if(message instanceof TextMessage) {
+                    String response = ((TextMessage) message).getText();
+                    System.out.println("Received = " + response);
+                }else{
+                    System.out.println("Message of wrong type: " + message.getClass().getName());
+                }
+            } catch (JMSException e){
+
+            }
+        }
     }
 }

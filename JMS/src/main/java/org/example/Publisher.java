@@ -1,8 +1,11 @@
 package org.example;
 
+import org.apache.activemq.memory.list.MessageList;
 import org.apache.qpid.jms.JmsConnectionFactory;
 
 import javax.jms.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.Scanner;
 
 public class Publisher {
@@ -28,27 +31,47 @@ public class Publisher {
         MessageProducer publisher = session.createProducer(destination);
 
         //6) write message
-//        TextMessage msg = session.createTextMessage();
+        String filePath = "src/main/resources/message.txt";
+        // Read the content of the file
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line);
+                content.append(System.lineSeparator());
+            }
+        }
 
-//        msg.setText("loneliness has followed me my while life, everywhere." +
-//                " In bars, in cars, sidewalks, stores, everywhere. There's no escape.");
-//        publisher.send(msg);
+        TextMessage msg = session.createTextMessage(content.toString());
 
-        String response;
-        do {
-            System.out.println("Enter message: ");
-            response = input.nextLine();
-            // Create a message object
-            TextMessage msg = session.createTextMessage(response);
-
-            // Send the message to the topic
+        // Send the message to the topic
+        while(true){
+            long start = System.currentTimeMillis();
             publisher.send(msg);
+            long end = System.currentTimeMillis();
+            System.out.println("Time taken = " + (end - start) + "ms");
+        }
 
-        } while (!response.equalsIgnoreCase("Quit"));
-        input.close();
+//        String response;
+//        do {
+//            System.out.println("Enter message: ");
+//            response = input.nextLine();
+//            // Create a message object
+//            TextMessage msg = session.createTextMessage(response);
+//
+//            // Send the message to the topic
+//            long start = System.currentTimeMillis();
+//            publisher.send(msg);
+//            long end = System.currentTimeMillis();
+//            System.out.println("Time taken = "+(end-start) + "ms");
+//
+//        } while (!response.equalsIgnoreCase("Quit"));
+//        input.close();
 
         // Close the connection
-        connection.close();
+//        connection.close();
     }
+
+
 
 }
