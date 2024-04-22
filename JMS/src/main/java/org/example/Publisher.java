@@ -43,14 +43,13 @@ public class Publisher {
         }
 
         TextMessage msg = session.createTextMessage(content.toString());
+        sendMessagesIndefinitely(publisher, msg);
+//        sendNMessages(publisher, msg, 10000);
 
-        // Send the message to the topic
-        while(true){
-            long start = System.currentTimeMillis();
-            publisher.send(msg);
-            long end = System.currentTimeMillis();
-            System.out.println("Time taken = " + (end - start) + "ms");
-        }
+        TextMessage quitMsg = session.createTextMessage("Quit");
+        publisher.send(quitMsg);
+
+
 
 //        String response;
 //        do {
@@ -72,6 +71,36 @@ public class Publisher {
 //        connection.close();
     }
 
-
-
+    public static void sendMessagesIndefinitely(MessageProducer publisher, TextMessage msg) throws JMSException {
+        // Send the message to the topic
+        long count = 0, avg = 0, sum = 0;
+        while(true){
+            long start = System.currentTimeMillis();
+            publisher.send(msg);
+            long end = System.currentTimeMillis();
+            System.out.println("Time taken = " + (end - start) + "ms");
+            sum += (end - start);
+            count++;
+            avg = sum / count;
+            System.out.println("------------------------------------Average time taken = " + avg + "ms");
+        }
+    }
+    public static void sendNMessages(MessageProducer publisher, TextMessage msg, int n) throws JMSException {
+        for(int i = 0;i < n;i++){
+            // add the current time to the message
+            msg.setJMSTimestamp(System.currentTimeMillis());
+            publisher.send(msg);
+        }
+    }
+    public static void sendNMessagesPerSecond(MessageProducer publisher, TextMessage msg, int messagesPerSecond) throws JMSException, InterruptedException {
+        // send X number of messages per second
+        double sleepTime = 1000.0 / messagesPerSecond;
+        for (int i = 0;i < messagesPerSecond;i++){
+            long start = System.currentTimeMillis();
+            publisher.send(msg);
+            long end = System.currentTimeMillis();
+            System.out.println("Time taken = " + (end - start) + "ms");
+            Thread.sleep((long) (sleepTime - 0.2 * sleepTime));
+        }
+    }
 }
