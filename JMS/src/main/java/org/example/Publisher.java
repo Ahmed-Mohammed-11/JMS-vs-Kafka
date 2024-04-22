@@ -3,10 +3,9 @@ package org.example;
 import org.apache.qpid.jms.JmsConnectionFactory;
 
 import javax.jms.*;
-import javax.naming.InitialContext;
 import java.util.Scanner;
 
-public class Producer {
+public class Publisher {
     private static final String TOPIC_NAME = "accursedTest";
     private static final int NO_OF_CONSUMERS = 1;
 
@@ -19,8 +18,11 @@ public class Producer {
         // Create a session
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
+        Scanner input = new Scanner(System.in);
+        System.out.println("please enter topic name you want to publish to: ");
+        String topicName = input.nextLine();
         // Create a topic
-        Destination destination = session.createTopic(TOPIC_NAME);
+        Destination destination = session.createTopic(topicName);
 
         // Create a publisher specific to topic
         MessageProducer publisher = session.createProducer(destination);
@@ -32,7 +34,6 @@ public class Producer {
 //                " In bars, in cars, sidewalks, stores, everywhere. There's no escape.");
 //        publisher.send(msg);
 
-        Scanner input = new Scanner(System.in);
         String response;
         do {
             System.out.println("Enter message: ");
@@ -50,35 +51,4 @@ public class Producer {
         connection.close();
     }
 
-//        try
-//        {   //Create and start connection
-//            InitialContext ctx=new InitialContext();
-//            TopicConnectionFactory f=(TopicConnectionFactory)ctx.lookup("myTopicConnectionFactory");
-//            TopicConnection con=f.createTopicConnection();
-//            con.start();
-//            //2) create queue session
-//            TopicSession ses=con.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
-//            //3) get the Topic object
-//            Topic t=(Topic)ctx.lookup("TOPIC_NAME");
-//            //4)create TopicPublisher object
-//            TopicPublisher publisher=ses.createPublisher(t);
-//            //5) create TextMessage object
-//            TextMessage msg = ses.createTextMessage();
-//
-//            //6) write message
-//            msg.setText("loneliness has followed me my while life, everywhere." +
-//                    " In bars, in cars, sidewalks, stores, everywhere. There's no escape.");
-//            publisher.publish(msg);
-//            con.close();
-//        }catch(Exception e){System.out.println(e);}
-//    }
-
-//
-//    MyTopic myTopic = new MyTopic(TOPIC_NAME);
-//        myTopic.send("why?");
-//        Thread.sleep(2000);
-//
-//        myTopic.receive();
-//        myTopic.close();
-//    }
 }

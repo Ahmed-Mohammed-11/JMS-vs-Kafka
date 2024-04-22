@@ -5,7 +5,7 @@ import javax.jms.*;
 import java.io.Console;
 import java.util.Scanner;
 
-public class Consumer {
+public class Subscriber {
     private static final String TOPIC_NAME = "accursedTest";
 
     public static void main(String[] args) throws Exception {
